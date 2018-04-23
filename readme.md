@@ -17,3 +17,9 @@
 - локализация (i18n) - только для английской локали
 
 
+## Running
+
+`grails run-app` to run app
+default url is http://localhost:8080/contacts-grails-task
+
+`grails test-app` to test app
