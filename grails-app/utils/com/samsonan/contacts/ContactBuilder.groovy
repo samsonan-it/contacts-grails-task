@@ -9,6 +9,9 @@ class ContactBuilder {
 
 	final static DATE_PATTERN = "dd.MM.yyyy"
 	
+	/**
+	 * Convert ContactDto -> Contact
+	 */
 	static def buildContact(ContactDto contactDto) {
 		def contact = new Contact()
 

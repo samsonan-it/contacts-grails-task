@@ -1,46 +1,41 @@
 package com.samsonan.contacts
 
-import org.springframework.context.MessageSource
-import org.springframework.context.i18n.LocaleContextHolder;
-
 import com.fasterxml.jackson.databind.MappingIterator
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.fasterxml.jackson.databind.ObjectReader
-
 import com.samsonan.contacts.dto.ContactDto
 import com.samsonan.contacts.dto.ImportErrorDto
 
 import grails.transaction.Transactional
 
+/**
+ * All import and parsing logic 
+ */
 @Transactional
 class ContactImportService {
 
-	MessageSource messageSource
-	
 	/**
 	 * Upload give Multipart File
 	 */
     def upload(file) {
-		
+
 		MappingIterator<ContactDto> iterator = initReader()
-			.readValues(convert(file))
-		
-		return processDto(iterator);
-			
+			.readValues(file.bytes)
+	
+		return processDto(iterator)
     }
 
 	/**
-	 * Used to test parsing logic 
+	 * Method is for testing, to see how our parsing logic works 
 	 */
 	def parse(csvString) {
 		
 		MappingIterator<ContactDto> iterator = initReader()
 			.readValues(csvString)
 		
-		return processDto(iterator);
-			
+		return processDto(iterator)
 	}
 		
 	private ObjectReader initReader() {
@@ -67,13 +62,11 @@ class ContactImportService {
 			log.debug 'going to import CSV contact: ' + value
 			
 			Contact contact
-			def errorMsg = []
 			
 			try {
 				contact = ContactBuilder.buildContact(value)
 			} catch (Exception e) {
-				errorMsg.add(e.message)
-				errorList.add(new ImportErrorDto(value.id, errorMsg))
+				errorList.add(new ImportErrorDto(value.id, e.message))
 				continue
 			}
 			
@@ -88,15 +81,5 @@ class ContactImportService {
 		
 		return errorList
 	}
-	
-	/**
-	 * Convert MultipartFile -> File
-	 */
-	private File convert(file)
-	{
-		File convFile = new File(file.originalFilename)
-		convFile.withOutputStream { stream -> stream.write(file.bytes) }
-		return convFile
-	}
-	
+
 }

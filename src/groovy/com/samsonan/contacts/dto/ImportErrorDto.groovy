@@ -5,7 +5,7 @@ import org.springframework.validation.FieldError
 class ImportErrorDto {
 
 	def id;
-	String errorMsg		  		 // general error
+	String errorMsg		  // general error
 	def fieldErrors = []  // Field Errors
 	
 	ImportErrorDto(id, String errorMsg) {
